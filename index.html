@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Treize logiciels pédagogiques STI2D conçus et préparés par Dr. Ayman BLORFAN (2009–2026) : simulateurs, révisions du bac et démarche de projet.">
+<title>Logiciels pédagogiques STI2D — Dr. Ayman BLORFAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F7F4; --grid:#DCE3E8; --grid-strong:#C6D1DA;
+  --ink:#16294A; --ink-soft:#4C5D78; --line:#16294A;
+  --sim:#1D6FB8; --rev:#2E8A57; --proj:#B5562A; --gold:#C99A1B;
+  --row-hover:#EAF0F5; --card:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1A2B; --grid:#1A2940; --grid-strong:#24375A;
+    --ink:#E4EBF4; --ink-soft:#9DAEC6; --line:#9DB3D3;
+    --sim:#6AAEEA; --rev:#6CC795; --proj:#E79065; --gold:#E8C25A;
+    --row-hover:#16243A; --card:#13213A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1A2B; --grid:#1A2940; --grid-strong:#24375A;
+  --ink:#E4EBF4; --ink-soft:#9DAEC6; --line:#9DB3D3;
+  --sim:#6AAEEA; --rev:#6CC795; --proj:#E79065; --gold:#E8C25A;
+  --row-hover:#16243A; --card:#13213A;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink);
+  font-family:"Barlow Semi Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+}
+.sheet{max-width:1120px; margin:2rem auto; padding:0 1rem}
+.frame{border:2px solid var(--line); outline:1px solid var(--line); outline-offset:6px; background:var(--paper)}
+
+header{padding:2.25rem 2rem 1.5rem; border-bottom:2px solid var(--line)}
+h1{margin:0; font-weight:700; letter-spacing:-.01em; font-size:clamp(2rem,5.5vw,3.4rem); line-height:1.02; color:var(--ink)}
+h1 .sub{display:block; font-size:.42em; font-weight:500; letter-spacing:0; margin-top:.5rem; color:var(--sim)}
+.head-top{display:grid; grid-template-columns:1fr auto; gap:1.5rem; align-items:start}
+.qr{margin:0; text-align:center; width:150px}
+.qr a{display:block; background:#fff; padding:10px; border:2px solid var(--line); border-radius:4px}
+.qr img{display:block; width:100%; height:auto; image-rendering:pixelated}
+.qr figcaption{margin-top:.4rem; font-size:.85rem; font-weight:600; color:var(--sim); line-height:1.2}
+@media (max-width:600px){.qr{width:110px}.head-top{gap:.9rem}}
+.lede{margin:.9rem 0 0; max-width:62ch; color:var(--ink-soft)}
+.lede b{color:var(--proj); font-weight:600}
+
+.tools{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-top:1.4rem}
+.filter{
+  font:inherit; font-size:.95rem; font-weight:600; cursor:pointer;
+  padding:.4rem .85rem; border-radius:3px; border:1.5px solid var(--c,var(--ink));
+  background:transparent; color:var(--c,var(--ink));
+  display:inline-flex; align-items:center; gap:.45rem;
+}
+.filter i{width:11px; height:11px; border-radius:2px; background:var(--c,var(--ink))}
+.filter[aria-pressed="true"]{background:var(--c,var(--ink)); color:var(--paper)}
+.filter[aria-pressed="true"] i{background:var(--paper)}
+.filter:focus-visible,.search:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+.search{
+  font:inherit; font-size:1rem; padding:.42rem .8rem; min-width:14rem; flex:1 1 14rem; max-width:22rem;
+  border:1.5px solid var(--grid-strong); border-radius:3px; background:var(--card); color:var(--ink);
+}
+.count{color:var(--ink-soft); font-size:.95rem; margin-left:auto}
+
+h2{
+  margin:0; padding:.7rem 2rem; font-size:1.25rem; font-weight:700;
+  border-bottom:1px solid var(--line); color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 12%,var(--paper));
+  display:flex; align-items:center; gap:.6rem;
+}
+h2 i{width:12px; height:12px; border-radius:2px; background:var(--accent)}
+.group{border-bottom:2px solid var(--line)}
+.group[hidden]{display:none}
+
+.row{
+  display:grid; grid-template-columns:3.6rem 230px 1fr 10.5rem; align-items:stretch;
+  border-bottom:1px solid var(--grid-strong); text-decoration:none; color:inherit;
+}
+.row[hidden]{display:none}
+.group .row:last-child{border-bottom:none}
+.row > *{padding:1rem 1.1rem}
+.rep{border-right:1px solid var(--grid-strong); font-weight:700; font-size:1.2rem; text-align:center; color:var(--accent); font-variant-numeric:tabular-nums}
+.pic{padding:.85rem .9rem; border-right:1px solid var(--grid-strong); display:flex; align-items:center}
+.ill{display:block; width:100%; height:auto; border:1px solid var(--grid-strong); border-radius:3px; background:var(--card)}
+.desig h3{margin:0 0 .3rem; font-size:1.28rem; font-weight:700; line-height:1.2; color:var(--accent)}
+.desig p{margin:0; color:var(--ink-soft); max-width:62ch}
+.desig .tool{font-weight:600; color:var(--ink)}
+.tags{display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.55rem}
+.tags span{font-size:.82rem; font-weight:600; padding:.05rem .5rem; border-radius:2px;
+  color:var(--accent); background:color-mix(in srgb,var(--accent) 13%,transparent)}
+.go{border-left:1px solid var(--grid-strong); display:flex; flex-direction:column; justify-content:center; gap:.25rem; font-size:.88rem; color:var(--ink-soft); word-break:break-all}
+.go strong{font-size:1rem; font-weight:700; color:var(--paper); background:var(--accent); padding:.35rem .7rem; border-radius:3px; text-align:center; word-break:normal}
+.row:hover,.row:focus-visible{background:var(--row-hover)}
+.row:focus-visible{outline:3px solid var(--accent); outline-offset:-3px}
+.sim{--accent:var(--sim)} .rev{--accent:var(--rev)} .proj{--accent:var(--proj)}
+.empty{padding:2rem; text-align:center; color:var(--ink-soft)}
+
+/* Illustrations */
+.a{fill:var(--accent)} .al{fill:color-mix(in srgb,var(--accent) 22%,var(--card))}
+.p{fill:var(--card)} .k{fill:var(--ink)} .m{fill:var(--ink-soft)} .g{fill:var(--grid)}
+.sa{stroke:var(--accent); fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+.sk{stroke:var(--ink); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.sm{stroke:var(--ink-soft); fill:none; stroke-width:1.5; stroke-linecap:round}
+.t{fill:var(--ink); font:600 13px "Barlow Semi Condensed",Arial,sans-serif}
+.ta{fill:var(--accent); font:700 13px "Barlow Semi Condensed",Arial,sans-serif}
+.tp{fill:var(--card); font:700 12px "Barlow Semi Condensed",Arial,sans-serif}
+
+.cartouche{display:grid; grid-template-columns:1.4fr 1fr; border-top:2px solid var(--line)}
+.cartouche > div{padding:1.1rem 1.25rem}
+.cartouche .credit{border-right:1px solid var(--line); background:color-mix(in srgb,var(--gold) 14%,var(--paper))}
+.cartouche .credit p{margin:0; font-size:1.25rem; font-weight:500; line-height:1.35}
+.cartouche .credit strong{font-weight:700; color:var(--sim)}
+.cartouche .credit em{font-style:normal; font-weight:700; color:var(--proj)}
+.cartouche dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:.25rem 1rem; font-size:.95rem}
+.cartouche dt{color:var(--ink-soft)} .cartouche dd{margin:0; font-weight:600}
+
+@media (max-width:860px){
+  .row{grid-template-columns:3rem 1fr; }
+  .rep{grid-row:span 3}
+  .pic{border-right:none; padding-bottom:0}
+  .pic .ill{max-width:420px}
+  .go{border-left:none; padding-top:0; flex-direction:row; align-items:center; flex-wrap:wrap; gap:.7rem}
+}
+@media (max-width:600px){
+  .sheet{margin:1rem auto; padding:0 .6rem}
+  header{padding:1.5rem 1.1rem 1.25rem}
+  h2{padding:.6rem 1.1rem}
+  .row > *{padding:.85rem .8rem}
+  .count{margin-left:0; width:100%}
+  .cartouche{grid-template-columns:1fr}
+  .cartouche .credit{border-right:none; border-bottom:1px solid var(--line)}
+}
+@media print{
+  body{background:#fff} .tools{display:none} .row{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+<div class="frame">
+
+<header>
+  <div class="head-top">
+  <div>
+  <h1>Logiciels pédagogiques STI2D<span class="sub">Simuler, réviser et mener un projet en Sciences de l'ingénieur</span></h1>
+  <p class="lede">Treize applications web, gratuites et utilisables en classe ou à la maison, sur ordinateur comme sur tablette. Choisissez une catégorie ou tapez un mot-clé, puis cliquez sur une ligne pour <b>ouvrir le logiciel dans un nouvel onglet</b>.</p>
+  </div>
+  <figure class="qr">
+    <a href="https://q.me-qr.com/vytariva" target="_blank" rel="noopener" aria-label="Ouvrir le lien du QR code"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0AQAAAADjreInAAADHUlEQVR42u2dvY7bMBCEd8IDZCCF1KWU30R+dPtNpDKd1FmAfZNC/LWdFLniZGIWkH/1+YAFlstdDnmgfcWWH/Y1Ey9evHjx/2nkZ/HekSSvZtZwNrOWs79IcizuHTjL/+LF74pfcchnWOj8qwnHv/BgsJv/uOHVzFoyRv/sv+njvWf5X7z4XfB3AMBHHAGAlosfBxYAXRb9EwDgJP+JF18p3/BqDX/73J+yt/wnXnxF/Mer2F8PZuthy/0tl26BWcvpKP+JF19j/LtsGWY9NDQza67ms3+J9JT/xIuvhyeCpQ7AVv8v6OKVV/+xAyD/iRe/q/m72Yp0Ldg+C8/PPPg8/2+u6+HV7T3lf/Hi98XfY+a+48NC945k0bfrecHRJhztovwtXnwNvNffOL/27rzyZntkpsAZi5X3wb+S/ka8+HePf7xQ3zRF9m+98u5xDFD8ixdfQ/7fYt/FmX+YAbBQ3o3WFzMBxb948fXEf6oAGBW4YQzoY/SfbVD+Fy9+h/tnSmuzDB7iN9m2fwax9r/56A9VwFz8zpj9yln+Fy9+R/wWvSt+Zh28lhOAzj8fLe3BGbR/Rrz4Ktbv+QOfjneYuZvjiobrIazeJ+1dO2+r7xPMzC6n4Sz/iRdfw/wfvBUreKmDl1cCY+zgnYv5v/wvXvx71//Oxz599F/9Gt6cRb/F3r3W78WLryn+w7k5t1j7m6UOXuje9bGLN/hRQPEvXvz31u/B7k9a/PVBcz9l7y+n9PcRtTuhf5/GgPZJxcvUvZf/xYv/9vin792Z3eG4RX1Ds6Uz2x7bOR8Del4g/4kXXwOPTHvreIvamxW/ONuCLp6f08czMIeQw+U/8eIrqN+DuUx7O9trBY/0t+LF18O/Pv92jWdmLOhjB2/cqn+c7IKT/Cde/Nvnf2Szf5et3jHr3/NBuSv9vXjxe+W3M/CXLIN3T/f8O383D/odix2AUf4XL363+ft5/9xc6G/CDjrV7+LF1xH/qX53cfa+6e/a+N0YM/jZ9++lvxEv/v3jP7dUvwfLR4CkwFf+Fy/+7Xno/w+LFy/+m/g/+UGaz5r601IAAAAASUVORK5CYII=" width="500" height="500" alt="QR code d'accès aux logiciels"></a>
+    <figcaption>Scannez pour accéder aux logiciels</figcaption>
+  </figure>
+  </div>
+  <div class="tools" role="group" aria-label="Filtrer les logiciels">
+    <button class="filter" data-f="all" aria-pressed="true">Tous</button>
+    <button class="filter" data-f="sim" aria-pressed="false" style="--c:var(--sim)"><i></i>Simulateurs</button>
+    <button class="filter" data-f="rev" aria-pressed="false" style="--c:var(--rev)"><i></i>Révision et bac</button>
+    <button class="filter" data-f="proj" aria-pressed="false" style="--c:var(--proj)"><i></i>Projet et modélisation</button>
+    <input class="search" type="search" placeholder="Rechercher : réseau, SysML, ESP32…" aria-label="Rechercher un logiciel">
+    <span class="count" aria-live="polite"></span>
+  </div>
+</header>
+
+<!-- ============ SIMULATEURS ============ -->
+<section class="group sim" data-g="sim" aria-labelledby="g1">
+  <h2 id="g1"><i></i>Simulateurs et laboratoires virtuels</h2>
+
+  <a class="row" href="https://virtuallab-eta.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">1</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Carte Arduino reliée à une LED et un capteur">
+      <rect class="g" x="0" y="0" width="320" height="180" opacity=".35"/>
+      <rect class="a" x="24" y="40" width="130" height="96" rx="6"/>
+      <rect class="p" x="34" y="50" width="30" height="20" rx="2"/>
+      <rect class="k" x="78" y="78" width="54" height="22" rx="2"/>
+      <g class="p"><rect x="40" y="122" width="6" height="6"/><rect x="52" y="122" width="6" height="6"/><rect x="64" y="122" width="6" height="6"/><rect x="76" y="122" width="6" height="6"/><rect x="88" y="122" width="6" height="6"/><rect x="100" y="122" width="6" height="6"/><rect x="112" y="122" width="6" height="6"/><rect x="124" y="122" width="6" height="6"/></g>
+      <text class="tp" x="78" y="62">UNO</text>
+      <rect class="al" x="186" y="30" width="114" height="120" rx="4"/>
+      <path d="M118 125 C150 160 190 120 214 104" stroke="#D93A3A" stroke-width="3" fill="none"/>
+      <path d="M106 125 C150 170 230 150 262 120" stroke="#2A2A2A" stroke-width="3" fill="none" opacity=".7"/>
+      <circle cx="222" cy="78" r="13" fill="#E5484D"/><circle cx="222" cy="78" r="22" fill="#E5484D" opacity=".25"/>
+      <rect x="216" y="90" width="3" height="18" class="k"/><rect x="226" y="90" width="3" height="18" class="k"/>
+      <rect class="k" x="250" y="62" width="32" height="40" rx="3"/><circle class="p" cx="266" cy="78" r="8"/>
+      <text class="ta" x="190" y="168">▶ Simuler</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Simuler des circuits électroniques et microcontrôleurs</h3>
+      <p><span class="tool">BLORFAN VirtualLab STI2D.</span> Laboratoire virtuel pour câbler et programmer Arduino, ESP32, ESP32-CAM et micro:bit, puis simuler le circuit avec oscilloscope et voltmètre. Nombreux projets exemples, espace élève et espace professeur.</p>
+      <div class="tags"><span>Arduino</span><span>ESP32</span><span>micro:bit</span><span>Mesures</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>virtuallab-eta.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://networklab-two.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">2</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Réseau avec routeur, switch et ordinateurs">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <g class="sa"><path d="M160 46 V78"/><path d="M160 98 L60 132"/><path d="M160 98 L160 132"/><path d="M160 98 L260 132"/><path d="M200 36 H262"/></g>
+      <circle class="a" cx="160" cy="36" r="16"/><text class="tp" x="148" y="40">R1</text>
+      <rect class="a" x="120" y="78" width="80" height="20" rx="3"/><text class="tp" x="138" y="92">Switch</text>
+      <g><rect class="k" x="40" y="132" width="40" height="26" rx="2"/><rect class="p" x="44" y="136" width="32" height="18"/>
+      <rect class="k" x="140" y="132" width="40" height="26" rx="2"/><rect class="p" x="144" y="136" width="32" height="18"/>
+      <rect class="k" x="240" y="132" width="40" height="26" rx="2"/><rect class="p" x="244" y="136" width="32" height="18"/></g>
+      <path class="sk" d="M262 26 a14 10 0 0 1 26 0 a10 8 0 0 1 10 14 h-40 a8 8 0 0 1 4-14z"/>
+      <circle cx="110" cy="115" r="5" fill="#2E8A57"/>
+      <text class="t" x="20" y="24">ping 192.168.1.10</text>
+      <text class="ta" x="198" y="122">IPv4 /24</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Construire et diagnostiquer un réseau informatique</h3>
+      <p><span class="tool">BLORFAN NetworkLab Pro.</span> Placer PC, switch, routeur et serveur, câbler en RJ45, configurer l'IPv4, tester par ping et terminal, calculer des sous-réseaux et comparer réseaux protégés et non protégés.</p>
+      <div class="tags"><span>IPv4</span><span>Sous-réseaux</span><span>Cyberdéfense</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>networklab-two.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://blocscpp.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">3</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Blocs de programmation et code généré">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect class="a" x="20" y="26" width="120" height="28" rx="5"/><text class="tp" x="30" y="45">répéter toujours</text>
+      <rect x="34" y="58" width="110" height="26" rx="5" fill="#E8A33B"/><text class="tp" x="44" y="76">allumer LED 13</text>
+      <rect x="34" y="88" width="110" height="26" rx="5" fill="#8E5BC7"/><text class="tp" x="44" y="106">attendre 500 ms</text>
+      <rect x="34" y="118" width="110" height="26" rx="5" fill="#E8A33B"/><text class="tp" x="44" y="136">éteindre LED 13</text>
+      <path class="sa" d="M156 90 H178 M170 82 L178 90 L170 98"/>
+      <rect class="k" x="188" y="26" width="116" height="128" rx="4"/>
+      <text x="196" y="48" fill="#7FD1FF" font-family="monospace" font-size="11">void loop() {</text>
+      <text x="204" y="66" fill="#FFD479" font-family="monospace" font-size="11">digitalWrite(</text>
+      <text x="212" y="82" fill="#B6F09C" font-family="monospace" font-size="11">13, HIGH);</text>
+      <text x="204" y="100" fill="#FFD479" font-family="monospace" font-size="11">delay(500);</text>
+      <text x="204" y="118" fill="#FFD479" font-family="monospace" font-size="11">digitalWrite(</text>
+      <text x="212" y="134" fill="#B6F09C" font-family="monospace" font-size="11">13, LOW);</text>
+      <text x="196" y="150" fill="#7FD1FF" font-family="monospace" font-size="11">}</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Programmer par blocs et obtenir le code C++ ou Python</h3>
+      <p><span class="tool">Blocs vers code.</span> Assembler des blocs pour générer un programme Arduino/ESP (C++) ou micro:bit (MicroPython), convertir un code existant en blocs et téléverser par USB.</p>
+      <div class="tags"><span>Blocs</span><span>C++</span><span>MicroPython</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>blocscpp.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://rdm20263d.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">4</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Barre cylindrique en traction avec carte de contraintes">
+      <defs><linearGradient id="st" x1="0" x2="1"><stop offset="0" stop-color="#2E8A57"/><stop offset=".5" stop-color="#E8C23B"/><stop offset="1" stop-color="#D93A3A"/></linearGradient></defs>
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect x="70" y="66" width="180" height="44" fill="url(#st)"/>
+      <ellipse cx="70" cy="88" rx="10" ry="22" fill="#2E8A57"/><ellipse cx="250" cy="88" rx="10" ry="22" fill="#D93A3A"/>
+      <path class="sa" d="M58 88 H16 M26 78 L16 88 L26 98"/><path class="sa" d="M262 88 H304 M294 78 L304 88 L294 98"/>
+      <text class="ta" x="18" y="70">F</text><text class="ta" x="292" y="70">F</text>
+      <text class="t" x="100" y="138">σ = F / S</text>
+      <rect class="al" x="70" y="150" width="180" height="10" rx="2"/><rect class="a" x="70" y="150" width="76" height="10" rx="2"/>
+      <text class="t" x="70" y="40">Traction · Flexion · Torsion</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Visualiser en 3D les sollicitations d'une pièce</h3>
+      <p><span class="tool">Simulateur RDM 3D.</span> Régler diamètre, longueur, effort et matériau pour observer traction, compression, flexion et torsion, avec calcul de la contrainte et vérification de la condition de résistance.</p>
+      <div class="tags"><span>Contraintes</span><span>Animation 3D</span><span>Matériaux</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>rdm20263d.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://sonometre.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">5</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Feu tricolore et niveau sonore en décibels">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect class="k" x="36" y="18" width="62" height="146" rx="10"/>
+      <circle cx="67" cy="48" r="18" fill="#E5484D" opacity=".3"/>
+      <circle cx="67" cy="91" r="18" fill="#E8C23B" opacity=".3"/>
+      <circle cx="67" cy="134" r="18" fill="#30A46C"/><circle cx="67" cy="134" r="25" fill="#30A46C" opacity=".25"/>
+      <text class="ta" x="124" y="70" style="font-size:44px">48 dB</text>
+      <text class="t" x="126" y="94">État : calme</text>
+      <g><rect x="126" y="112" width="20" height="40" rx="2" fill="#30A46C"/><rect x="152" y="100" width="20" height="52" rx="2" fill="#30A46C"/><rect x="178" y="120" width="20" height="32" rx="2" fill="#30A46C"/><rect x="204" y="92" width="20" height="60" rx="2" fill="#E8C23B" opacity=".45"/><rect x="230" y="80" width="20" height="72" rx="2" fill="#E5484D" opacity=".3"/><rect x="256" y="96" width="20" height="56" rx="2" fill="#E8C23B" opacity=".45"/></g>
+    </svg></div>
+    <div class="desig">
+      <h3>Mesurer et réguler le niveau sonore en classe</h3>
+      <p><span class="tool">Feu tricolore anti-bruit.</span> Sonomètre utilisant le micro de l'ordinateur : affichage en dB, feu vert, jaune ou rouge selon des seuils réglables, et message vocal lorsque le bruit devient trop élevé.</p>
+      <div class="tags"><span>Décibels</span><span>Micro</span><span>Gestion de classe</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>sonometre.vercel.app</div>
+  </a>
+</section>
+
+<!-- ============ RÉVISION ============ -->
+<section class="group rev" data-g="rev" aria-labelledby="g2">
+  <h2 id="g2"><i></i>Révision et préparation au bac</h2>
+
+  <a class="row" href="https://sujetbac.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">6</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Pile de sujets de bac corrigés">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect class="al" x="70" y="34" width="110" height="130" rx="3" transform="rotate(-8 125 99)"/>
+      <rect class="al" x="80" y="30" width="110" height="130" rx="3" transform="rotate(-3 135 95)"/>
+      <rect class="p" x="92" y="24" width="110" height="134" rx="3" stroke="var(--accent)" stroke-width="2"/>
+      <rect class="a" x="92" y="24" width="110" height="26" rx="3"/><text class="tp" x="100" y="42">BAC STI2D · SIN</text>
+      <g class="sm"><path d="M104 66 H190"/><path d="M104 80 H180"/><path d="M104 94 H188"/><path d="M104 108 H170"/><path d="M104 122 H186"/></g>
+      <path d="M150 138 l8 8 l16 -18" stroke="#2E8A57" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <text class="ta" x="220" y="80" style="font-size:30px">7</text><text class="t" x="220" y="100">sujets</text>
+      <text class="t" x="220" y="124">2020 → 2026</text>
+    </svg></div>
+    <div class="desig">
+      <h3>S'entraîner sur des sujets de bac STI2D spécialité SIN</h3>
+      <p><span class="tool">Sujets bac 2I2D SIN.</span> Sept sujets complets d'entraînement de 2020 à 2026 : partie commune et partie SIN, documents techniques, documents réponses et corrigés détaillés.</p>
+      <div class="tags"><span>Annales</span><span>Corrigés</span><span>Spécialité SIN</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>sujetbac.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://revisiontsti2d.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">7</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Livre de révision ouvert avec badges de progression">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <path class="a" d="M40 40 Q100 28 160 46 V156 Q100 140 40 152 Z"/>
+      <path class="al" d="M160 46 Q220 28 280 40 V152 Q220 140 160 156 Z"/>
+      <path d="M160 46 V156" stroke="var(--ink)" stroke-width="2"/>
+      <g stroke="var(--card)" stroke-width="2"><path d="M56 66 H144"/><path d="M56 82 H140"/><path d="M56 98 H144"/><path d="M56 114 H130"/></g>
+      <text class="ta" x="178" y="74">⚡ Énergie</text><text class="ta" x="178" y="98">⚙ Matière</text><text class="ta" x="178" y="122">📡 Information</text>
+      <circle cx="270" cy="32" r="18" fill="#E8C23B"/><text class="t" x="259" y="37">XP</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Réviser tout le programme de Terminale STI2D</h3>
+      <p><span class="tool">Réussir le bac STI2D.</span> Livre interactif pour l'écrit 2I2D, l'épreuve pratique et la physique-chimie/maths : cours, laboratoires interactifs, problèmes corrigés, quiz, cartes mémoire et suivi de progression.</p>
+      <div class="tags"><span>Écrit 2I2D</span><span>Épreuve pratique</span><span>Quiz</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>revisiontsti2d.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://int2026-theta.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">8</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Numération binaire et porte logique ET">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <g font-family="monospace" font-size="22" font-weight="700">
+        <rect class="a" x="22" y="30" width="30" height="34" rx="3"/><text x="30" y="55" fill="var(--card)">0</text>
+        <rect class="a" x="56" y="30" width="30" height="34" rx="3"/><text x="64" y="55" fill="var(--card)">1</text>
+        <rect class="a" x="90" y="30" width="30" height="34" rx="3"/><text x="98" y="55" fill="var(--card)">1</text>
+        <rect class="al" x="124" y="30" width="30" height="34" rx="3"/><text class="k" x="132" y="55">0</text>
+        <rect class="a" x="158" y="30" width="30" height="34" rx="3"/><text x="166" y="55" fill="var(--card)">1</text>
+      </g>
+      <text class="ta" x="200" y="54" style="font-size:20px">= 0x69</text>
+      <path class="sk" d="M70 104 H110 V156 H70 Z" />
+      <path class="sk" d="M110 104 A26 26 0 0 1 110 156"/>
+      <path class="sa" d="M40 116 H70 M40 144 H70 M136 130 H176"/>
+      <text class="t" x="28" y="120">A</text><text class="t" x="28" y="148">B</text><text class="ta" x="180" y="135">S = A·B</text>
+      <text class="t" x="230" y="150">Ch. 1 → 11</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Revoir les bases de Première en spécialité SIN</h3>
+      <p><span class="tool">Révisions SIN.</span> Fiche complète en onze chapitres : numération, chaîne d'information, CAN, logique, algorithmes, réseaux, électricité, physique et stockage numérique, avec exercices corrigés et fiche mémo.</p>
+      <div class="tags"><span>Binaire</span><span>Logique</span><span>Fiche mémo</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>int2026-theta.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://rdm2026.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">9</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Poutre sur deux appuis avec charge et flèche">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect class="a" x="40" y="74" width="240" height="18" rx="2"/>
+      <path class="k" d="M50 92 l-14 24 h28 z"/><path class="k" d="M270 92 l-14 24 h28 z"/>
+      <circle class="k" cx="264" cy="120" r="3"/><circle class="k" cx="276" cy="120" r="3"/>
+      <g class="sk"><path d="M80 34 V68"/><path d="M120 34 V68"/><path d="M160 34 V68"/><path d="M200 34 V68"/><path d="M240 34 V68"/><path d="M80 34 H240"/></g>
+      <text class="ta" x="140" y="28">q = 3 000 N/m</text>
+      <path d="M50 140 Q160 172 270 140" stroke="#D93A3A" stroke-width="2.5" stroke-dasharray="6 4" fill="none"/>
+      <text x="150" y="172" fill="#D93A3A" font-weight="700" font-size="13" font-family="Arial">f</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Apprendre la résistance des matériaux</h3>
+      <p><span class="tool">Cours RDM.</span> Contrainte, déformation et loi de Hooke, puis traction, cisaillement, flexion et torsion, avec tableau des matériaux, exercices de type bac corrigés et récapitulatif des formules.</p>
+      <div class="tags"><span>Flexion</span><span>Torsion</span><span>Exercices bac</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>rdm2026.vercel.app</div>
+  </a>
+</section>
+
+<!-- ============ PROJET ============ -->
+<section class="group proj" data-g="proj" aria-labelledby="g3">
+  <h2 id="g3"><i></i>Démarche de projet et modélisation</h2>
+
+  <a class="row" href="https://diagrammedeprojet2026.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">10</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Diagramme bête à cornes">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <ellipse class="al" cx="80" cy="44" rx="58" ry="22" stroke="var(--accent)" stroke-width="2"/>
+      <ellipse class="al" cx="240" cy="44" rx="58" ry="22" stroke="var(--accent)" stroke-width="2"/>
+      <text class="t" x="44" y="49">Utilisateur</text><text class="t" x="196" y="49">Matière d'œuvre</text>
+      <ellipse class="a" cx="160" cy="104" rx="64" ry="24"/><text class="tp" x="128" y="109">PRODUIT</text>
+      <path class="sk" d="M110 64 Q120 92 100 104"/><path class="sk" d="M210 64 Q200 92 220 104"/>
+      <path d="M40 150 Q160 176 280 150" stroke="var(--accent)" stroke-width="3" fill="none"/>
+      <text class="ta" x="104" y="146">Dans quel but ?</text>
+    </svg></div>
+    <div class="desig">
+      <h3>S'exercer à l'analyse fonctionnelle du besoin</h3>
+      <p><span class="tool">Atelier de modélisation fonctionnelle.</span> Bête à cornes, diagramme pieuvre, exigences SysML et cas d'utilisation : exercices progressifs à compléter directement dans le schéma, avec la correction affichée à sa place.</p>
+      <div class="tags"><span>Bête à cornes</span><span>Pieuvre</span><span>SysML</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>diagrammedeprojet2026.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://diagramme2027.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">11</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Diagramme d'exigences SysML">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <rect class="p" x="104" y="16" width="112" height="46" rx="3" stroke="var(--accent)" stroke-width="2"/>
+      <rect class="a" x="104" y="16" width="112" height="16" rx="3"/><text class="tp" x="118" y="28">«requirement»</text>
+      <text class="t" x="114" y="52">REQ-01 Mission</text>
+      <rect class="p" x="20" y="112" width="120" height="50" rx="3" stroke="var(--accent)" stroke-width="2"/>
+      <rect class="a" x="20" y="112" width="120" height="16" rx="3"/><text class="tp" x="38" y="124">«requirement»</text>
+      <text class="t" x="28" y="150">Ouverture ≤ 2 s</text>
+      <rect class="p" x="180" y="112" width="120" height="50" rx="3" stroke="var(--accent)" stroke-width="2"/>
+      <rect class="a" x="180" y="112" width="120" height="16" rx="3"/><text class="tp" x="198" y="124">«requirement»</text>
+      <text class="t" x="188" y="150">Sécurité obstacle</text>
+      <g stroke="var(--ink)" stroke-width="1.8" stroke-dasharray="5 4" fill="none"><path d="M80 112 L140 62"/><path d="M240 112 L180 62"/></g>
+      <text class="ta" x="64" y="88">«deriveReqt»</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Passer du cahier des charges au modèle SysML</h3>
+      <p><span class="tool">Tutoriel cahier des charges et SysML.</span> Douze exercices guidés : cahier des charges, bête à cornes, exigences, contexte, cas d'utilisation et bloc interne (IBD), corrections déverrouillées par le professeur.</p>
+      <div class="tags"><span>Cahier des charges</span><span>IBD</span><span>Cas d'utilisation</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>diagramme2027.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://1t1-pi.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">12</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Smartphone posé sur un support amplificateur passif">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <path class="a" d="M40 160 H200 L170 104 H70 Z"/>
+      <path class="al" d="M170 104 Q220 100 236 70 L246 140 Q214 132 186 140 Z" stroke="var(--accent)" stroke-width="2"/>
+      <rect class="k" x="88" y="26" width="48" height="92" rx="7" transform="rotate(-45 112 72)"/>
+      <rect class="p" x="93" y="34" width="38" height="74" rx="3" transform="rotate(-45 112 72)"/>
+      <g class="sa"><path d="M258 82 Q270 104 258 126"/><path d="M272 70 Q290 104 272 138"/><path d="M286 58 Q310 104 286 150"/></g>
+      <text class="t" x="44" y="28">45° · sans énergie</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Mener un mini-projet : support amplificateur pour smartphone</h3>
+      <p><span class="tool">Démarche de projet corrigée.</span> Séquence en cinq étapes, de l'imprégnation (QQOQCCP) à la conception, au maquettage et aux tests, pour un support qui amplifie le son sans énergie.</p>
+      <div class="tags"><span>QQOQCCP</span><span>Maquette</span><span>Validation</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>1t1-pi.vercel.app</div>
+  </a>
+
+  <a class="row" href="https://drone-six-pink.vercel.app/" target="_blank" rel="noopener">
+    <div class="rep">13</div>
+    <div class="pic"><svg class="ill" viewBox="0 0 320 180" role="img" aria-label="Drone quadricoptère avec module de capteurs ESP32">
+      <rect class="g" width="320" height="180" opacity=".35"/>
+      <g class="sk" stroke-width="6"><path d="M110 50 L210 130"/><path d="M210 50 L110 130"/></g>
+      <g><ellipse class="al" cx="104" cy="46" rx="36" ry="9" stroke="var(--accent)" stroke-width="2"/><ellipse class="al" cx="216" cy="46" rx="36" ry="9" stroke="var(--accent)" stroke-width="2"/><ellipse class="al" cx="104" cy="134" rx="36" ry="9" stroke="var(--accent)" stroke-width="2"/><ellipse class="al" cx="216" cy="134" rx="36" ry="9" stroke="var(--accent)" stroke-width="2"/></g>
+      <rect class="k" x="136" y="72" width="48" height="36" rx="8"/>
+      <rect class="a" x="140" y="112" width="40" height="22" rx="3"/><text class="tp" x="146" y="127">ESP32</text>
+      <path d="M160 138 L132 172 M160 138 L188 172" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text class="t" x="244" y="96">GPS</text><text class="t" x="244" y="114">BME280</text><text class="t" x="20" y="96">microSD</text>
+    </svg></div>
+    <div class="desig">
+      <h3>Équiper un drone du commerce d'un module de mesure</h3>
+      <p><span class="tool">DroneLab STI2D.</span> Six mini-projets (météo, thermique, photo, balise BLE, obstacle, qualité de l'air) avec nomenclature, schéma de câblage, code ESP32, simulateurs et règles de sécurité.</p>
+      <div class="tags"><span>Drone</span><span>ESP32</span><span>Capteurs</span></div>
+    </div>
+    <div class="go"><strong>Ouvrir</strong>drone-six-pink.vercel.app</div>
+  </a>
+</section>
+
+<p class="empty" hidden>Aucun logiciel ne correspond à cette recherche. Essayez un autre mot-clé ou cliquez sur « Tous ».</p>
+
+<footer class="cartouche">
+  <div class="credit">
+    <p>Ces logiciels sont conçus et préparés par <strong>Dr. Ayman BLORFAN</strong>, <em>2009–2026</em>.</p>
+  </div>
+  <dl>
+    <dt>Auteur</dt><dd>Dr. Ayman BLORFAN</dd>
+    <dt>Période</dt><dd>2009–2026</dd>
+    <dt>Contenu</dt><dd>13 logiciels STI2D</dd>
+  </dl>
+</footer>
+
+</div>
+</main>
+<script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('.row'));
+  var groups=[].slice.call(document.querySelectorAll('.group'));
+  var btns=[].slice.call(document.querySelectorAll('.filter'));
+  var search=document.querySelector('.search');
+  var count=document.querySelector('.count');
+  var empty=document.querySelector('.empty');
+  var current='all';
+  function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+  rows.forEach(function(r){r.dataset.txt=norm(r.textContent);});
+  function apply(){
+    var q=norm(search.value.trim()), total=0;
+    groups.forEach(function(g){
+      var n=0, okG=(current==='all'||g.dataset.g===current);
+      g.querySelectorAll('.row').forEach(function(r){
+        var ok=okG&&(!q||r.dataset.txt.indexOf(q)>-1);
+        r.hidden=!ok; if(ok)n++;
+      });
+      g.hidden=(n===0); total+=n;
+    });
+    count.textContent=total+(total>1?' logiciels affichés':' logiciel affiché');
+    empty.hidden=total>0;
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      current=b.dataset.f;
+      btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      apply();
+    });
+  });
+  search.addEventListener('input',apply);
+  apply();
+})();
+</script>
+</body>
+</html>
